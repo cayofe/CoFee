@@ -12,9 +12,6 @@ error_reporting(1);
   // Execute a consulta
 $result = $conn->query("SELECT * FROM reviews");
 
-if ($result === false) {
-    die("Erro na consulta: " . $conn->error);
-}
 
 // Obtenha o número de linhas no resultado
 $num = $result->num_rows;

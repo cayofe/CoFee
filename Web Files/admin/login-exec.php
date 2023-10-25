@@ -11,30 +11,29 @@
 	//Validation error flag
 	$errflag = false;
 	
-	//Connect to mysql server
-	$link = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
-	if(!$link) {
-		die('Failed to connect to server: ' . mysql_error());
-	}
 	
-	//Select database
-	$db = mysql_select_db(DB_DATABASE);
-	if(!$db) {
-		die("Unable to select database");
-	}
+	//Connect to mysql server
+
+    $conn = new mysqli($servername, $username, $password, $database);
+    if(!$conn) {
+        die('Failed to connect to server: ' . $conn->error);
+    }
 	
 	//Function to sanitize values received from the form. Prevents SQL injection
-	function clean($str) {
-		$str = @trim($str);
-		if(get_magic_quotes_gpc()) {
-			$str = stripslashes($str);
-		}
-		return mysql_real_escape_string($str);
+	function clean($conn, $str) {
+		$str = trim($str);
+		
+	
+	
+		// Use mysqli_real_escape_string para escapar a string
+		$str = $conn->real_escape_string($str);
+	
+		return $str;
 	}
 	
 	//Sanitize the POST values
-	$login = clean($_POST['login']);
-	$password = clean($_POST['password']);
+	$login = clean($conn,$_POST['login']);
+	$password = clean($conn,$_POST['password']);
 	
 	//Input Validations
 	if($login == '') {
@@ -56,14 +55,14 @@
 	
 	//Create query
 	$qry="SELECT * FROM pizza_admin WHERE Username='$login' AND Password='$password'";
-	$result=mysql_query($qry);
+	$result=$conn->query($qry);
 	
 	//Check whether the query was successful or not
 	if($result) {
-		if(mysql_num_rows($result) == 1) {
+		if(mysqli_num_rows($result) == 1) {
 			//Login Successful
 			session_regenerate_id();
-			$member = mysql_fetch_assoc($result);
+			$member = mysqli_fetch_assoc($result);
 			$_SESSION['SESS_ADMIN_ID'] = $member['Admin_ID'];
 			$_SESSION['SESS_ADMIN_NAME'] = $member['Username'];
 			session_write_close();
