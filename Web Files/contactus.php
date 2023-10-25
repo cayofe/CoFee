@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title><?php echo APP_NAME; ?>:Contacts</title>
+<title><?php echo "APP_NAME"; ?>:Contacts</title>
 <link href="stylesheets/user_styles.css" rel="stylesheet" type="text/css" />
 <script language="JavaScript" src="validation/user.js">
 <!--  Including Boostrap and JQuery Files   -->
@@ -27,7 +27,7 @@
   <table width="500" height="50">
   <tr><td rowspan="11"><img width="400" height="400" src="images/pizza-inn-map4-mombasa-road.png" /></td></tr>
   <tr><td rowspan="11"></td></tr>
-  <tr><td><?php echo APP_NAME ?> Restaurant</td></tr>
+  <tr><td><?php echo "APP_NAME" ?> Restaurant</td></tr>
   <tr><td>P.O. Box: 45640-00100</td></tr>
   <tr><td>Ikorodu</td></tr>
   <tr><td>Lagos</td></tr>

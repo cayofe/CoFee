@@ -1,25 +1,29 @@
 <?php
-	//Include database connection details
-	require_once('connection/config.php');
+	
 	//Connect to mysql server
-	$link = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
-	if(!$link) {
-		die('Failed to connect to server: ' . mysql_error());
-	}
-	//Select database
-	$db = mysql_select_db(DB_DATABASE);
-	if(!$db) {
-		die("Unable to select database");
-	}
+	require_once('connection/config.php');
+error_reporting(1);
+//Connect to mysql server
+    $conn = new mysqli($servername, $username, $password, $database);
+    if(!$conn) {
+        die('Failed to connect to server: ' . $conn->error);
+    }
 
-  $result = mysql_query("SELECT * from reviews");
-  $num = mysql_num_rows($result);
+  // Execute a consulta
+$result = $conn->query("SELECT * FROM reviews");
+
+if ($result === false) {
+    die("Erro na consulta: " . $conn->error);
+}
+
+// Obtenha o número de linhas no resultado
+$num = $result->num_rows;
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title><?php echo APP_NAME ?>:Registration Failed</title>
+<title><?php echo "APP_NAME" ?>:Registration Failed</title>
 <link href="stylesheets/user_styles.css" rel="stylesheet" type="text/css" />
 <script language="JavaScript" src="validation/user.js">
 <!--  Including Boostrap and JQuery Files   -->

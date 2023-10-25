@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title><?php echo APP_NAME; ?>:Access Denied</title>
+<title><?php echo "APP_NAME"; ?>:Access Denied</title>
 <link href="stylesheets/user_styles.css" rel="stylesheet" type="text/css" />
 <!--  Including Boostrap and JQuery Files   -->
    <link rel="stylesheet"  href="Assests/css/bootstrap.min.css">

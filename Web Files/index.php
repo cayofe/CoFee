@@ -3,20 +3,19 @@
 require_once('connection/config.php');
 error_reporting(1);
 //Connect to mysql server
-    $link = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
-    if(!$link) {
-        die('Failed to connect to server: ' . mysql_error());
+    $conn = new mysqli($servername, $username, $password, $database);
+    if(!$conn) {
+        die('Failed to connect to server: ' . $conn->error);
     }
 
-    //Select database
+   /* //Select database
     $db = mysql_select_db(DB_DATABASE);
     if(!$db) {
         die("Unable to select database");
     }
-
+*/
 //retrieve questions from the questions table
-$questions=mysql_query("SELECT * FROM questions")
-or die("Something is wrong ... \n" . mysql_error());
+$questions=$conn->query("SELECT * FROM questions") or die("Something is wrong ... \n" . $conn->error);
 ?>
 <?php
 //setting-up a remember me cookie
@@ -38,7 +37,7 @@ or die("Something is wrong ... \n" . mysql_error());
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title><?php echo APP_NAME; ?>:Home</title>
+<title><?php echo "APP_NAME"; ?>:Home</title>
 
 <!--  Including Boostrap and JQuery Files   -->
    <link rel="stylesheet"  href="Assests/css/bootstrap.min.css">
@@ -129,7 +128,7 @@ or die("Something is wrong ... \n" . mysql_error());
         <option value="select"> Select Security Question
         <?php
         //loop through quantities table rows
-        while ($row=mysql_fetch_array($questions)){
+        while ($row=mysqli_fetch_array($questions)){
         echo "<option value=$row[question_id]>$row[question_text]";
         }
         ?>
@@ -159,7 +158,7 @@ or die("Something is wrong ... \n" . mysql_error());
         <input name="name" type="text" class="form-control" id="name" placeholder="Your Name"/>
         <input name="email" type="text" class="form-control" id="email" placeholder="Your Email" />
         <textarea name="message" id="message" placeholder="Write Your Message" class="form-control">
-          </textarea
+      </textarea>
         <input type="reset" value="Clear Fields" class="ripple form-control btn btn-primary" id="clear_feilds"/> <br> <br>
         <input type="submit" name="Submit" value="Send Message" class="form-control btn btn-primary" id="Contact_btn"/>
       </form>

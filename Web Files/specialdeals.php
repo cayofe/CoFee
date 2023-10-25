@@ -1,33 +1,29 @@
 <?php
 //checking connection and connecting to a database
+//checking connection and connecting to a database
 require_once('connection/config.php');
+error_reporting(1);
 //Connect to mysql server
-	$link = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
-	if(!$link) {
-		die('Failed to connect to server: ' . mysql_error());
-	}
-
-	//Select database
-	$db = mysql_select_db(DB_DATABASE);
-	if(!$db) {
-		die("Unable to select database");
-	}
+    $conn = new mysqli($servername, $username, $password, $database);
+    if(!$conn) {
+        die('Failed to connect to server: ' . $conn->error);
+    }
 //retrive promotions from the specials table
-$result=mysql_query("SELECT * FROM specials")
+$result=$conn->query("SELECT * FROM specials")
 or die("There are no records to display ... \n" . mysql_error());
 ?>
 <?php
     //retrive a currency from the currencies table
     //define a default value for flag_1
     $flag_1 = 1;
-    $currencies=mysql_query("SELECT * FROM currencies WHERE flag='$flag_1'")
+    $currencies=$conn->query("SELECT * FROM currencies WHERE flag='$flag_1'")
     or die("A problem has occured ... \n" . "Our team is working on it at the moment ... \n" . "Please check back after few hours.");
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title><?php echo APP_NAME; ?>:Specials</title>
+<title><?php echo "APP_NAME"; ?>:Specials</title>
 <!--  Including Boostrap and JQuery Files   -->
    <link rel="stylesheet"  href="Assests/css/bootstrap.css">
    <link rel="stylesheet"  href="Assests/css/font-awesome.min.css">
@@ -60,8 +56,8 @@ or die("There are no records to display ... \n" . mysql_error());
                 <th> <center>Promo Price </center> </th>
         </tr>
         <?php
-                $symbol=mysql_fetch_assoc($currencies); //gets active currency
-                while ($row=mysql_fetch_assoc($result)){
+                $symbol=mysqli_fetch_assoc($currencies); //gets active currency
+                while ($row=mysqli_fetch_assoc($result)){
                     echo "<tr>";
                     echo '<td><a href=images/'. $row['special_photo']. ' alt="click to view full image" target="_blank"><img src=images/'. $row['special_photo']. ' width="80" height="70"></a></td>';
                     echo "<td>" . $row['special_name']."</td>";
@@ -72,8 +68,8 @@ or die("There are no records to display ... \n" . mysql_error());
                     echo "</td>";
                     echo "</tr>";
                     }
-            mysql_free_result($result);
-            mysql_close($link);
+            mysqli_free_result($result);
+            mysqli_close($conn);
 ?>
 </table>
 </div>
