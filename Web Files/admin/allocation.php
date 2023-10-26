@@ -5,42 +5,36 @@
 //checking connection and connecting to a database
 require_once('connection/config.php');
 //Connect to mysql server
-	$link = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
-	if(!$link) {
-		die('Failed to connect to server: ' . mysql_error());
-	}
-
-	//Select database
-	$db = mysql_select_db(DB_DATABASE);
-	if(!$db) {
-		die("Unable to select database");
-	}
+$conn = new mysqli($servername, $username, $password, $database);
+if(!$conn) {
+    die('Failed to connect to server: ' . $conn->error);
+}
 
     //selecting all records from the staff table. Return an error if there are no records in the tables
-    $staff=mysql_query("SELECT * FROM staff")
-    or die("There are no records to display ... \n" . mysql_error());
+    $staff=$conn->query("SELECT * FROM staff")
+    or die("There are no records to display ... \n" . mysqli_error());
 ?>
 <?php
     //get order ids from the orders_details table based on flag=0
     $flag_0 = 0;
-    $orders=mysql_query("SELECT * FROM orders_details WHERE flag='$flag_0'")
-    or die("There are no records to display ... \n" . mysql_error());
+    $orders=$conn->query("SELECT * FROM orders_details WHERE flag='$flag_0'")
+    or die("There are no records to display ... \n" . mysqli_error());
 ?>
 <?php
     //get reservation ids from the reservations_details table based on flag=0
     $flag_0 = 0;
-    $reservations=mysql_query("SELECT * FROM reservations_details WHERE flag='$flag_0'")
-    or die("There are no records to display ... \n" . mysql_error());
+    $reservations=$conn->query("SELECT * FROM reservations_details WHERE flag='$flag_0'")
+    or die("There are no records to display ... \n" . mysqli_error());
 ?>
 <?php
     //selecting all records from the staff table. Return an error if there are no records in the tables
-    $staff_1=mysql_query("SELECT * FROM staff")
-    or die("There are no records to display ... \n" . mysql_error());
+    $staff_1=$conn->query("SELECT * FROM staff")
+    or die("There are no records to display ... \n" . mysqli_error());
 ?>
 <?php
     //selecting all records from the staff table. Return an error if there are no records in the tables
-    $staff_2=mysql_query("SELECT * FROM staff")
-    or die("There are no records to display ... \n" . mysql_error());
+    $staff_2=$conn->query("SELECT * FROM staff")
+    or die("There are no records to display ... \n" . mysqli_error());
 ?>
 <!DOCTYPE html>
 <html>
@@ -89,7 +83,7 @@ require_once('connection/config.php');
 
 		<?php
 		//loop through all table rows
-		while ($row=mysql_fetch_array($staff)){
+		while ($row=mysqli_fetch_array($staff)){
 		echo "<tr>";
 		echo "<td>" . $row['StaffID']."</td>";
 		echo "<td>" . $row['First_Name']."</td>";
@@ -98,8 +92,8 @@ require_once('connection/config.php');
 		echo '<td><a href="delete-staff.php?id=' . $row['StaffID'] . '">Remove Staff</a></td>';
 		echo "</tr>";
 		}
-		mysql_free_result($staff);
-		mysql_close($link);
+		mysqli_free_result($staff);
+		mysqli_close($conn);
 		?>
 		</table>
 		<hr>
@@ -118,7 +112,7 @@ require_once('connection/config.php');
 		        <option value="select">- select one option -
 		        <?php
 		        //loop through orders_details table rows
-		        while ($row=mysql_fetch_array($orders)){
+		        while ($row=mysqli_fetch_array($orders)){
 		        echo "<option value=$row[order_id]>$row[order_id]";
 		        }
 		        ?>
@@ -130,7 +124,7 @@ require_once('connection/config.php');
 		        <option value="select">- select one option -
 		        <?php
 		        //loop through staff table rows
-		        while ($row=mysql_fetch_array($staff_1)){
+		        while ($row=mysqli_fetch_array($staff_1)){
 		        echo "<option value=$row[StaffID]>$row[StaffID]";
 		        }
 		        ?>
@@ -156,7 +150,7 @@ require_once('connection/config.php');
 		        <option value="select">- select one option -
 		        <?php
 		        //loop through reservations_details table rows
-		        while ($row=mysql_fetch_array($reservations)){
+		        while ($row=mysqli_fetch_array($reservations)){
 		        echo "<option value=$row[ReservationID]>$row[ReservationID]";
 		        }
 		        ?>
@@ -168,7 +162,7 @@ require_once('connection/config.php');
 		        <option value="select">- select one option -
 		        <?php
 		        //loop through staff table rows
-		        while ($row=mysql_fetch_array($staff_2)){
+		        while ($row=mysqli_fetch_array($staff_2)){
 		        echo "<option value=$row[StaffID]>$row[StaffID]";
 		        }
 		        ?>

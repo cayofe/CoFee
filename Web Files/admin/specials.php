@@ -4,26 +4,20 @@
 <?php
 //checking connection and connecting to a database
 require_once('connection/config.php');
-//Connect to mysql server
-	$link = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
-	if(!$link) {
-		die('Failed to connect to server: ' . mysql_error());
-	}
-
-	//Select database
-	$db = mysql_select_db(DB_DATABASE);
-	if(!$db) {
-		die("Unable to select database");
-	}
+//Connect to mysqli server
+$conn = new mysqli($servername, $username, $password, $database);
+if(!$conn) {
+    die('Failed to connect to server: ' . $conn->error);
+}
 //retrive promotions from the specials table
-$result=mysql_query("SELECT * FROM specials")
-or die("There are no records to display ... \n" . mysql_error());
+$result=$conn->query("SELECT * FROM specials")
+or die("There are no records to display ... \n" . mysqli_error());
 ?>
 <?php
     //retrive a currency from the currencies table
     //define a default value for flag_1
     $flag_1 = 1;
-    $currencies=mysql_query("SELECT * FROM currencies WHERE flag='$flag_1'")
+    $currencies=$conn->query("SELECT * FROM currencies WHERE flag='$flag_1'")
     or die("A problem has occured ... \n" . "Our team is working on it at the moment ... \n" . "Please check back after few hours.");
 ?>
 <!DOCTYPE html>
@@ -87,8 +81,8 @@ or die("There are no records to display ... \n" . mysql_error());
 		</tr>
 		<?php
 		//loop through all table rows
-		$symbol=mysql_fetch_assoc($currencies); //gets active currency
-		while ($row=mysql_fetch_array($result)){
+		$symbol=mysqli_fetch_assoc($currencies); //gets active currency
+		while ($row=mysqli_fetch_array($result)){
 		echo "<tr>";
 		echo '<td><img src=../images/'. $row['special_photo']. ' width="80" height="70"></td>';
 		echo "<td>" . $row['special_name']."</td>";
@@ -99,8 +93,8 @@ or die("There are no records to display ... \n" . mysql_error());
 		echo '<td><a href="delete-special.php?id=' . $row['special_id'] . '">Remove Promo</a></td>';
 		echo "</tr>";
 		}
-		mysql_free_result($result);
-		mysql_close($link);
+		mysqli_free_result($result);
+		mysqli_close($conn);
 		?>
 		</table>
 	</div>

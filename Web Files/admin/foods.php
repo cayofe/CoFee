@@ -5,30 +5,26 @@
 //checking connection and connecting to a database
 require_once('connection/config.php');
 //Connect to mysql server
-    $link = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
-    if(!$link) {
-        die('Failed to connect to server: ' . mysql_error());
-    }
+$conn = new mysqli($servername, $username, $password, $database);
+if(!$conn) {
+    die('Failed to connect to server: ' . $conn->error);
+}
 
-    //Select database
-    $db = mysql_select_db(DB_DATABASE);
-    if(!$db) {
-        die("Unable to select database");
-    }
+   
     //retrive promotions from the specials table
-    $result=mysql_query("SELECT * FROM food_details,categories WHERE food_details.food_category=categories.category_id")
-    or die("There are no records to display ... \n" . mysql_error());
+    $result=$conn->query("SELECT * FROM food_details,categories WHERE food_details.food_category=categories.category_id")
+    or die("There are no records to display ... \n" . mysqli_error());
 ?>
 <?php
     //retrive categories from the categories table
-    $categories=mysql_query("SELECT * FROM categories")
-    or die("There are no records to display ... \n" . mysql_error());
+    $categories=$conn->query("SELECT * FROM categories")
+    or die("There are no records to display ... \n" . mysqli_error());
 ?>
 <?php
     //retrive a currency from the currencies table
     //define a default value for flag_1
     $flag_1 = 1;
-    $currencies=mysql_query("SELECT * FROM currencies WHERE flag='$flag_1'")
+    $currencies=$conn->query("SELECT * FROM currencies WHERE flag='$flag_1'")
     or die("A problem has occured ... \n" . "Our team is working on it at the moment ... \n" . "Please check back after few hours.");
 ?>
 <!DOCTYPE html>
@@ -77,7 +73,7 @@ require_once('connection/config.php');
             <option value="select">- select one option -
             <?php
             //loop through categories table rows
-            while ($row=mysql_fetch_array($categories)){
+            while ($row=mysqli_fetch_array($categories)){
             echo "<option value=$row[category_id]>$row[category_name]";
             }
             ?>
@@ -100,8 +96,8 @@ require_once('connection/config.php');
 
         <?php
         //loop through all table rows
-        $symbol=mysql_fetch_assoc($currencies); //gets active currency
-        while ($row=mysql_fetch_array($result)){
+        $symbol=mysqli_fetch_assoc($currencies); //gets active currency
+        while ($row=mysqli_fetch_array($result)){
         echo "<tr>";
         echo '<td><img src=../images/'. $row['food_photo']. ' width="80" height="70"></td>';
         echo "<td>" . $row['food_name']."</td>";
@@ -111,8 +107,8 @@ require_once('connection/config.php');
         echo '<td><a href="delete-food.php?id=' . $row['food_id'] . '">Remove Food</a></td>';
         echo "</tr>";
         }
-        mysql_free_result($result);
-        mysql_close($link);
+        mysqli_free_result($result);
+        mysqli_close($conn);
         ?>
         </table>
       </div>

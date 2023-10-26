@@ -5,23 +5,17 @@
 //checking connection and connecting to a database
 require_once('connection/config.php');
 //Connect to mysql server
-	$link = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
-	if(!$link) {
-		die('Failed to connect to server: ' . mysql_error());
-	}
-
-	//Select database
-	$db = mysql_select_db(DB_DATABASE);
-	if(!$db) {
-		die("Unable to select database");
-	}
+$conn = new mysqli($servername, $username, $password, $database);
+if(!$conn) {
+    die('Failed to connect to server: ' . $conn->error);
+}
 //selecting all records from the reservations_details table based on table ids. Return an error if there are no records in the table
-$tables=mysql_query("SELECT members.firstname, members.lastname, reservations_details.ReservationID, reservations_details.table_id, reservations_details.Reserve_Date, reservations_details.Reserve_Time,reservations_details.staffID, tables.table_id, tables.table_name,staff.First_Name FROM members, reservations_details, tables, staff WHERE members.member_id = reservations_details.member_id AND tables.table_id=reservations_details.table_id AND staff.staffID=reservations_details.staffID")
-or die("There are no records to display ... \n" . mysql_error());
+$tables=$conn->query("SELECT members.firstname, members.lastname, reservations_details.ReservationID, reservations_details.table_id, reservations_details.Reserve_Date, reservations_details.Reserve_Time,reservations_details.staffID, tables.table_id, tables.table_name,staff.First_Name FROM members, reservations_details, tables, staff WHERE members.member_id = reservations_details.member_id AND tables.table_id=reservations_details.table_id AND staff.staffID=reservations_details.staffID")
+or die("There are no records to display ... \n" . mysqli_error());
 
 //selecting all records from the reservations_details table based on partyhall ids. Return an error if there are no records in the table
-$partyhalls=mysql_query("SELECT members.firstname, members.lastname, reservations_details.ReservationID, reservations_details.partyhall_id, reservations_details.Reserve_Date, reservations_details.Reserve_Time,reservations_details.staffID, partyhalls.partyhall_id, partyhalls.partyhall_name,staff.First_Name FROM members, reservations_details, partyhalls,staff WHERE members.member_id = reservations_details.member_id AND partyhalls.partyhall_id=reservations_details.partyhall_id  AND staff.staffID=reservations_details.staffID")
-or die("There are no records to display ... \n" . mysql_error());
+$partyhalls=$conn->query("SELECT members.firstname, members.lastname, reservations_details.ReservationID, reservations_details.partyhall_id, reservations_details.Reserve_Date, reservations_details.Reserve_Time,reservations_details.staffID, partyhalls.partyhall_id, partyhalls.partyhall_name,staff.First_Name FROM members, reservations_details, partyhalls,staff WHERE members.member_id = reservations_details.member_id AND partyhalls.partyhall_id=reservations_details.partyhall_id  AND staff.staffID=reservations_details.staffID")
+or die("There are no records to display ... \n" . mysqli_error());
 ?>
 <!DOCTYPE html>
 <html>
@@ -73,7 +67,7 @@ or die("There are no records to display ... \n" . mysql_error());
 
 			<?php
 			//loop through all table rows
-			while ($row=mysql_fetch_array($tables)){
+			while ($row=mysqli_fetch_array($tables)){
 			echo "<tr>";
 			echo "<td>" . $row['ReservationID']."</td>";
 			echo "<td>" . $row['firstname']."</td>";
@@ -85,7 +79,7 @@ or die("There are no records to display ... \n" . mysql_error());
 			echo '<td><a href="delete-reservation.php?id=' . $row['ReservationID'] . '" class="btn btn-primary">Delete Reservation</a></td>';
 			echo "</tr>";
 			}
-			mysql_free_result($tables);
+			mysqli_free_result($tables);
 			//mysql_close($link);
 			?>
 			</table>
@@ -105,7 +99,7 @@ or die("There are no records to display ... \n" . mysql_error());
 
 			<?php
 			//loop through all table rows
-			while ($row=mysql_fetch_array($partyhalls)){
+			while ($row=mysqli_fetch_array($partyhalls)){
 			echo "<tr>";
 			echo "<td>" . $row['ReservationID']."</td>";
 			echo "<td>" . $row['firstname']."</td>";
@@ -117,8 +111,8 @@ or die("There are no records to display ... \n" . mysql_error());
 			echo '<td><a href="delete-reservation.php?id=' . $row['ReservationID'] . '" class="btn btn-primary">Delete Reservation</a></td>';
 			echo "</tr>";
 			}
-			mysql_free_result($partyhalls);
-			mysql_close($link);
+			mysqli_free_result($partyhalls);
+			mysqli_close($conn);
 			?>
 			</table>
 		 </div>

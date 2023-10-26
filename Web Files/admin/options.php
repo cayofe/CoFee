@@ -5,56 +5,50 @@
 //checking connection and connecting to a database
 require_once('connection/config.php');
 //Connect to mysql server
-    $link = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
-    if(!$link) {
-        die('Failed to connect to server: ' . mysql_error());
-    }
-
-    //Select database
-    $db = mysql_select_db(DB_DATABASE);
-    if(!$db) {
-        die("Unable to select database");
-    }
+$conn = new mysqli($servername, $username, $password, $database);
+if(!$conn) {
+    die('Failed to connect to server: ' . $conn->error);
+}
 
 //retrive categories from the categories table
-$categories=mysql_query("SELECT * FROM categories")
-or die("There are no records to display ... \n" . mysql_error());
+$categories=$conn->query("SELECT * FROM categories")
+or die("There are no records to display ... \n" . mysqli_error());
 
 //retrieve quantities from the quantities table
-$quantities=mysql_query("SELECT * FROM quantities")
-or die("Something is wrong ... \n" . mysql_error());
+$quantities=$conn->query("SELECT * FROM quantities")
+or die("Something is wrong ... \n" . mysqli_error());
 
 //retrieve currencies from the currencies table (deleting)
-$currencies=mysql_query("SELECT * FROM currencies")
-or die("Something is wrong ... \n" . mysql_error());
+$currencies=$conn->query("SELECT * FROM currencies")
+or die("Something is wrong ... \n" . mysqli_error());
 
 //retrieve currencies from the currencies table (updating)
-$currencies_1=mysql_query("SELECT * FROM currencies")
-or die("Something is wrong ... \n" . mysql_error());
+$currencies_1=$conn->query("SELECT * FROM currencies")
+or die("Something is wrong ... \n" . mysqli_error());
 
 //retrieve polls from the ratings table
-$ratings=mysql_query("SELECT * FROM ratings")
-or die("Something is wrong ... \n" . mysql_error());
+$ratings=$conn->query("SELECT * FROM ratings")
+or die("Something is wrong ... \n" . mysqli_error());
 
 //retrieve timezones from the timezones table (deleting)
-$timezones=mysql_query("SELECT * FROM timezones")
-or die("Something is wrong ... \n" . mysql_error());
+$timezones=$conn->query("SELECT * FROM timezones")
+or die("Something is wrong ... \n" . mysqli_error());
 
 //retrieve timezones from the timezones table (updating)
-$timezones_1=mysql_query("SELECT * FROM timezones")
-or die("Something is wrong ... \n" . mysql_error());
+$timezones_1=$conn->query("SELECT * FROM timezones")
+or die("Something is wrong ... \n" . mysqli_error());
 
 //retrieve tables from the tables table
-$tables=mysql_query("SELECT * FROM tables")
-or die("Something is wrong ... \n" . mysql_error());
+$tables=$conn->query("SELECT * FROM tables")
+or die("Something is wrong ... \n" . mysqli_error());
 
 //retrieve partyhalls from the partyhalls table
-$partyhalls=mysql_query("SELECT * FROM partyhalls")
-or die("Something is wrong ... \n" . mysql_error());
+$partyhalls=$conn->query("SELECT * FROM partyhalls")
+or die("Something is wrong ... \n" . mysqli_error());
 
 //retrieve questions from the questions table
-$questions=mysql_query("SELECT * FROM questions")
-or die("Something is wrong ... \n" . mysql_error());
+$questions=$conn->query("SELECT * FROM questions")
+or die("Something is wrong ... \n" . mysqli_error());
 ?>
 <!DOCTYPE html>
 <html>
@@ -114,7 +108,7 @@ or die("Something is wrong ... \n" . mysql_error());
               <option value="select">- select category -
               <?php
               //loop through categories table rows
-              while ($row=mysql_fetch_array($categories)){
+              while ($row=mysqli_fetch_array($categories)){
               echo "<option value=$row[category_id]>$row[category_name]";
               }
               ?>
@@ -151,7 +145,7 @@ or die("Something is wrong ... \n" . mysql_error());
               <option value="select">- select quantity -
               <?php
               //loop through quantities table rows
-              while ($row=mysql_fetch_array($quantities)){
+              while ($row=mysqli_fetch_array($quantities)){
               echo "<option value=$row[quantity_id]>$row[quantity_value]";
               }
               ?>
@@ -188,7 +182,7 @@ or die("Something is wrong ... \n" . mysql_error());
               <option value="select">- select currency -
               <?php
               //loop through currencies table rows
-              while ($row=mysql_fetch_array($currencies)){
+              while ($row=mysqli_fetch_array($currencies)){
               echo "<option value=$row[currency_id]>$row[currency_symbol]";
               }
               ?>
@@ -207,7 +201,7 @@ or die("Something is wrong ... \n" . mysql_error());
               <option value="select">- select a currency -
               <?php
               //loop through currencies table rows
-              while ($row=mysql_fetch_array($currencies_1)){
+              while ($row=mysqli_fetch_array($currencies_1)){
               echo "<option value=$row[currency_id]>$row[currency_symbol]";
               }
               ?>
@@ -244,7 +238,7 @@ or die("Something is wrong ... \n" . mysql_error());
               <option value="select">- select level -
               <?php
               //loop through ratings table rows
-              while ($row=mysql_fetch_array($ratings)){
+              while ($row=mysqli_fetch_array($ratings)){
               echo "<option value=$row[rate_id]>$row[rate_name]";
               }
               ?>
@@ -281,7 +275,7 @@ or die("Something is wrong ... \n" . mysql_error());
               <option value="select">- select timezone -
               <?php
               //loop through timezones table rows
-              while ($row=mysql_fetch_array($timezones)){
+              while ($row=mysqli_fetch_array($timezones)){
               echo "<option value=$row[timezone_id]>$row[timezone_reference]";
               }
               ?>
@@ -300,7 +294,7 @@ or die("Something is wrong ... \n" . mysql_error());
               <option value="select">- select timezone -
               <?php
               //loop through timezones table rows
-              while ($row=mysql_fetch_array($timezones_1)){
+              while ($row=mysqli_fetch_array($timezones_1)){
               echo "<option value=$row[timezone_id]>$row[timezone_reference]";
               }
               ?>
@@ -337,7 +331,7 @@ or die("Something is wrong ... \n" . mysql_error());
               <option value="select">- select table -
               <?php
               //loop through tables table rows
-              while ($row=mysql_fetch_array($tables)){
+              while ($row=mysqli_fetch_array($tables)){
               echo "<option value=$row[table_id]>$row[table_name]";
               }
               ?>
@@ -374,7 +368,7 @@ or die("Something is wrong ... \n" . mysql_error());
               <option value="select">- select Room -
               <?php
               //loop through partyhalls table rows
-              while ($row=mysql_fetch_array($partyhalls)){
+              while ($row=mysqli_fetch_array($partyhalls)){
               echo "<option value=$row[partyhall_id]>$row[partyhall_name]";
               }
               ?>
@@ -411,7 +405,7 @@ or die("Something is wrong ... \n" . mysql_error());
               <option value="select">- select question -
               <?php
               //loop through quantities table rows
-              while ($row=mysql_fetch_array($questions)){
+              while ($row=mysqli_fetch_array($questions)){
               echo "<option value=$row[question_id]>$row[question_text]";
               }
               ?>

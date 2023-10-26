@@ -5,17 +5,10 @@
 //checking connection and connecting to a database
 require_once('connection/config.php');
 //Connect to mysql server
-	$link = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
-	if(!$link) {
-		die('Failed to connect to server: ' . mysql_error());
-	}
-
-	//Select database
-	$db = mysql_select_db(DB_DATABASE);
-	if(!$db) {
-		die("Unable to select database");
-	}
-
+$conn = new mysqli($servername, $username, $password, $database);
+if(!$conn) {
+    die('Failed to connect to server: ' . $conn->error);
+}
     //define default value for flag
     $flag_1 = 1;
 
@@ -28,52 +21,58 @@ require_once('connection/config.php');
     $worse_qry="";
 
 //count the number of records in the members, orders_details, and reservations_details tables
-$members=mysql_query("SELECT * FROM members")
-or die("There are no records to count ... \n" . mysql_error());
+$members=$conn->query("SELECT * FROM members")
+or die("There are no records to count ... \n" . mysqli_error());
 
-$orders_placed=mysql_query("SELECT * FROM orders_details")
-or die("There are no records to count ... \n" . mysql_error());
+$orders_placed=$conn->query("SELECT * FROM orders_details")
+or die("There are no records to count ... \n" . mysqli_error());
 
-$orders_processed=mysql_query("SELECT * FROM orders_details WHERE flag='$flag_1'")
-or die("There are no records to count ... \n" . mysql_error());
+$orders_processed=$conn->query("SELECT * FROM orders_details WHERE flag='$flag_1'")
+or die("There are no records to count ... \n" . mysqli_error());
 
-$tables_reserved=mysql_query("SELECT * FROM reservations_details WHERE table_flag='$flag_1'")
-or die("There are no records to count ... \n" . mysql_error());
+$tables_reserved=$conn->query("SELECT * FROM reservations_details WHERE table_flag='$flag_1'")
+or die("There are no records to count ... \n" . mysqli_error());
 
-$partyhalls_reserved=mysql_query("SELECT * FROM reservations_details WHERE partyhall_flag='$flag_1'")
-or die("There are no records to count ... \n" . mysql_error());
+$partyhalls_reserved=$conn->query("SELECT * FROM reservations_details WHERE partyhall_flag='$flag_1'")
+or die("There are no records to count ... \n" . mysqli_error());
 
-$tables_allocated=mysql_query("SELECT * FROM reservations_details WHERE flag='$flag_1' AND table_flag='$flag_1'")
-or die("There are no records to count ... \n" . mysql_error());
+$tables_allocated=$conn->query("SELECT * FROM reservations_details WHERE flag='$flag_1' AND table_flag='$flag_1'")
+or die("There are no records to count ... \n" . mysqli_error());
 
-$partyhalls_allocated=mysql_query("SELECT * FROM reservations_details WHERE flag='$flag_1' AND partyhall_flag='$flag_1'")
-or die("There are no records to count ... \n" . mysql_error());
+$partyhalls_allocated=$conn->query("SELECT * FROM reservations_details WHERE flag='$flag_1' AND partyhall_flag='$flag_1'")
+or die("There are no records to count ... \n" . mysqli_error());
 
 //get food names and ids from food_details table
-$foods=mysql_query("SELECT * FROM food_details")
-or die("Something is wrong ... \n" . mysql_error());
+$foods=$conn->query("SELECT * FROM food_details")
+or die("Something is wrong ... \n" . mysqli_error());
 ?>
 <?php
     if(isset($_POST['Submit'])){
         //Function to sanitize values received from the form. Prevents SQL injection
         function clean($str) {
-            $str = @trim($str);
-            if(get_magic_quotes_gpc()) {
-                $str = stripslashes($str);
+            $str = trim($str);
+            
+            // Check if the $conn variable is a valid MySQLi connection.
+            if ($conn && is_object($conn)) {
+                $str = mysqli_real_escape_string($conn, $str);
+            } else {
+                // Handle the case where $conn is not a valid connection.
+                // You should open a MySQL connection here and use it for escaping.
             }
-            return mysql_real_escape_string($str);
+            
+            return $str;
         }
         //get category id
         $id = clean($_POST['food']);
 
         //get ratings ids
-        $ratings=mysql_query("SELECT * FROM ratings")
-        or die("Something is wrong ... \n" . mysql_error());
-        $row_1=mysql_fetch_array($ratings);
-        $row_2=mysql_fetch_array($ratings);
-        $row_3=mysql_fetch_array($ratings);
-        $row_4=mysql_fetch_array($ratings);
-        $row_5=mysql_fetch_array($ratings);
+        $ratings=$conn->query("SELECT * FROM ratings")
+        or die("Something is wrong ... \n" . mysqli_error());
+        $row_1=mysqli_fetch_array($ratings);
+        $row_2=mysqli_fetch_array($ratings);
+        $row_3=mysqli_fetch_array($ratings);
+        $row_4=mysqli_fetch_array($ratings);
+        $row_5=mysqli_fetch_array($ratings);
         if($row_1){
             $excellent=$row_1['rate_id'];
         }
@@ -91,26 +90,26 @@ or die("Something is wrong ... \n" . mysql_error());
         }
 
         //selecting all records from the food_details and polls_details tables based on food id. Return an error if there are no records in the table
-        $qry=mysql_query("SELECT * FROM food_details, polls_details WHERE polls_details.food_id='$id' AND food_details.food_id='$id'")
-        or die("Something is wrong ... \n" . mysql_error());
+        $qry=$conn->query("SELECT * FROM food_details, polls_details WHERE polls_details.food_id='$id' AND food_details.food_id='$id'")
+        or die("Something is wrong ... \n" . mysqli_error());
 
-        $excellent_qry=mysql_query("SELECT * FROM food_details, polls_details WHERE polls_details.food_id='$id' AND food_details.food_id='$id' AND polls_details.rate_id='$excellent'")
-        or die("Something is wrong ... \n" . mysql_error());
+        $excellent_qry=$conn->query("SELECT * FROM food_details, polls_details WHERE polls_details.food_id='$id' AND food_details.food_id='$id' AND polls_details.rate_id='$excellent'")
+        or die("Something is wrong ... \n" . mysqli_error());
 
-        $good_qry=mysql_query("SELECT * FROM food_details, polls_details WHERE polls_details.food_id='$id' AND food_details.food_id='$id' AND polls_details.rate_id='$good'")
-        or die("Something is wrong ... \n" . mysql_error());
+        $good_qry=$conn->query("SELECT * FROM food_details, polls_details WHERE polls_details.food_id='$id' AND food_details.food_id='$id' AND polls_details.rate_id='$good'")
+        or die("Something is wrong ... \n" . mysqli_error());
 
-        $average_qry=mysql_query("SELECT * FROM food_details, polls_details WHERE polls_details.food_id='$id' AND food_details.food_id='$id' AND polls_details.rate_id='$average'")
-        or die("Something is wrong ... \n" . mysql_error());
+        $average_qry=$conn->query("SELECT * FROM food_details, polls_details WHERE polls_details.food_id='$id' AND food_details.food_id='$id' AND polls_details.rate_id='$average'")
+        or die("Something is wrong ... \n" . mysqli_error());
 
-        $bad_qry=mysql_query("SELECT * FROM food_details, polls_details WHERE polls_details.food_id='$id' AND food_details.food_id='$id' AND polls_details.rate_id='$bad'")
-        or die("Something is wrong ... \n" . mysql_error());
+        $bad_qry=$conn->query("SELECT * FROM food_details, polls_details WHERE polls_details.food_id='$id' AND food_details.food_id='$id' AND polls_details.rate_id='$bad'")
+        or die("Something is wrong ... \n" . mysqli_error());
 
-        $worse_qry=mysql_query("SELECT * FROM food_details, polls_details WHERE polls_details.food_id='$id' AND food_details.food_id='$id' AND polls_details.rate_id='$worse'")
-        or die("Something is wrong ... \n" . mysql_error());
+        $worse_qry=$conn->query("SELECT * FROM food_details, polls_details WHERE polls_details.food_id='$id' AND food_details.food_id='$id' AND polls_details.rate_id='$worse'")
+        or die("Something is wrong ... \n" . mysqli_error());
 
-        $no_rate_qry=mysql_query("SELECT * FROM food_details WHERE food_id='$id'")
-        or die("Something is wrong ... \n" . mysql_error());
+        $no_rate_qry=$conn->query("SELECT * FROM food_details WHERE food_id='$id'")
+        or die("Something is wrong ... \n" . mysqli_error());
     }
 ?>
 <!DOCTYPE html>
@@ -151,15 +150,15 @@ or die("Something is wrong ... \n" . mysql_error());
 			<div class="col-md-6">
 				<h3 style="text-align: center;">Statistics</h3> <hr>
 				<?php
-				        $result1=mysql_num_rows($members);
-				        $result2=mysql_num_rows($orders_placed);
-				        $result3=mysql_num_rows($orders_processed);
+				        $result1=mysqli_num_rows($members);
+				        $result2=mysqli_num_rows($orders_placed);
+				        $result3=mysqli_num_rows($orders_processed);
 				        $result4=$result2-$result3; //gets pending order(s)
-				        $result5=mysql_num_rows($tables_reserved);
-				        $result6=mysql_num_rows($tables_allocated);
+				        $result5=mysqli_num_rows($tables_reserved);
+				        $result6=mysqli_num_rows($tables_allocated);
 				        $result7=$result5-$result6; //gets pending table(s)
-				        $result8=mysql_num_rows($partyhalls_reserved);
-				        $result9=mysql_num_rows($partyhalls_allocated);
+				        $result8=mysqli_num_rows($partyhalls_reserved);
+				        $result9=mysqli_num_rows($partyhalls_allocated);
 				        $result10=$result8-$result9; //gets pending partyhall(s)
 				?>
 			 <ul class="list-group">
@@ -186,7 +185,7 @@ or die("Something is wrong ... \n" . mysql_error());
 				            <option value="select">- select food -
 				            <?php
 				            //loop through food_details table rows
-				            while ($row=mysql_fetch_array($foods)){
+				            while ($row=mysqli_fetch_array($foods)){
 				            echo "<option value=$row[food_id]>$row[food_name]";
 				            }
 				            ?>
@@ -199,13 +198,13 @@ or die("Something is wrong ... \n" . mysql_error());
 				<?php
 				    if(isset($_POST['Submit'])){
 				        //actual values
-				        $excellent_value=mysql_num_rows($excellent_qry);
-				        $good_value=mysql_num_rows($good_qry);
-				        $average_value=mysql_num_rows($average_qry);
-				        $bad_value=mysql_num_rows($bad_qry);
-				        $worse_value=mysql_num_rows($worse_qry);
+				        $excellent_value=mysqli_num_rows($excellent_qry);
+				        $good_value=mysqli_num_rows($good_qry);
+				        $average_value=mysqli_num_rows($average_qry);
+				        $bad_value=mysqli_num_rows($bad_qry);
+				        $worse_value=mysqli_num_rows($worse_qry);
 				        //percentile rates
-				        $total_value=mysql_num_rows($qry);
+				        $total_value=mysqli_num_rows($qry);
 				        if($total_value != 0){
 				            $excellent_rate=$excellent_value/$total_value*100;
 				            $good_rate=$good_value/$total_value*100;
@@ -221,12 +220,12 @@ or die("Something is wrong ... \n" . mysql_error());
 				            $worse_rate=0;
 				        }
 				        //get food name
-				        if(mysql_num_rows($qry)>0){
-				            $row=mysql_fetch_array($qry);
+				        if(mysqli_num_rows($qry)>0){
+				            $row=mysqli_fetch_array($qry);
 				            $food_name=$row['food_name'];
 				        }
 				        else{
-				            $row=mysql_fetch_array($no_rate_qry);
+				            $row=mysqli_fetch_array($no_rate_qry);
 				            $food_name=$row['food_name'];
 				        }
 				    }
@@ -264,7 +263,7 @@ or die("Something is wrong ... \n" . mysql_error());
 			 <div class="progress">
         <div class="progress-bar progress-bar-danger progress-bar-striped active" role="progressbar"
            aria-valuemin="0" aria-valuemax="100" style="width:<?php echo $worse_rate.'%' ?>">
-          <?php echo $worse_value."  (".$average_rate."%".")" ; ?> &nbsp;&nbsp; Worse
+          <?php echo $worse_value."  (".$average_rate."%".")" ; ?> &nbsp;&nbsp; Worse 
          </div>
        </div>
 

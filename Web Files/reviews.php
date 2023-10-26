@@ -45,7 +45,7 @@ $num = $result->num_rows;
 
   <?php
   for ($i=0; $i <$num ; $i++) {
-    $row = mysql_fetch_array($result);
+    $row = mysqli_fetch_array($result);
      ?>
     <img src="Assests/images/user_icon.png" style="width:60px; height:60px;">
      <i style="font-size:20px;"> <?php echo $row['user_name']; ?> </i>
